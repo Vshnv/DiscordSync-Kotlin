@@ -1,11 +1,9 @@
 package com.github.vshnv.discordsync
 
+import com.github.vshnv.discordsync.extensions.colorize
 import com.github.vshnv.discordsync.messaging.DiscordMessenger
 import com.github.vshnv.discordsync.messaging.DiscordReceiver
-import org.bukkit.plugin.java.JavaPlugin
 import java.lang.IllegalArgumentException
-import java.text.Normalizer
-import java.util.*
 
 
 /**
@@ -30,8 +28,6 @@ internal fun reloadReceiversFromConfig(plugin: DSync) {
 private val formatMap = mutableMapOf<Format, String>()
 internal fun loadFormats(plugin: DSync) {
     plugin.reloadConfig()
-    val config = plugin.config
-
     Format.values().forEach {
         formatMap[it] = getFormat(it, plugin)
     }
@@ -50,7 +46,6 @@ internal fun loadToken(plugin: DSync): String {
 
 /**
  * Retrieves formats from plugin for messages.
- *
  */
 private fun getFormat(format: Format, plugin: DSync): String {
     val config = plugin.config
@@ -59,7 +54,7 @@ private fun getFormat(format: Format, plugin: DSync): String {
 
 
 fun format(format: Format, vararg args: Pair<String, String>): String {
-    var result = formatMap[format] ?: ""
+    var result = (formatMap[format] ?: "").colorize()
     args.forEach {
         val placeholder = "%${it.first}%"
         result = result.replace(placeholder, it.second)

@@ -12,8 +12,10 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 
 
-class ReloadCommand: CommandBase("reload", "discordsync.reload") {
+class ReloadCommand: CommandBase("dsync", "discordsync.reload") {
     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
+        if (args.isEmpty()) return true
+        if (!args[0].equals("reload", true)) return true
         reloadReceiversFromConfig(JavaPlugin.getPlugin(DSync::class.java))
         loadFormats(JavaPlugin.getPlugin(DSync::class.java))
         sender.sendMessage("Reloaded clients and formats from config! Please wait a few seconds...!")

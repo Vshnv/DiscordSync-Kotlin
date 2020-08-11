@@ -18,7 +18,7 @@ object MCMessenger: Messenger<MCReceiver, MCMessage>()
 class MCReceiver: MessageReceiver<MCMessage>() {
     override fun onReceive(msg: MCMessage) {
         when (msg.format) {
-            Format.CHAT -> Bukkit.broadcastMessage(format(msg.format, "User" to msg.user, "Message" to msg.user))
+            Format.CHAT -> Bukkit.broadcastMessage(format(msg.format, "User" to msg.user, "Message" to msg.msg))
             Format.D_CAST -> Bukkit.broadcastMessage(format(msg.format, "Message" to msg.msg))
             else -> Unit
         }

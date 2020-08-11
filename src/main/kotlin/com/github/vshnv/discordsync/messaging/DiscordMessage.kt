@@ -33,7 +33,9 @@ class DiscordReceiver(channel: TextChannel): MessageReceiver<DiscordMessage>() {
         // Ignore call if hook client isn't ready
         webHook?.send(
             WebhookMessageBuilder()
-                .append(msg.msg)
+                .append(
+                    msg.msg.replace("@","")
+                )
                 .setAvatarUrl(msg.avatar)
                 .setUsername(msg.user)
                 .build()

@@ -39,7 +39,6 @@ abstract class CommandBase(name: String, private val permission: String = ""): C
 
 
 internal fun registerAllCommands(){
-
     val reflections = Reflections(CommandBase::class.java.`package`.name)
     reflections.getSubTypesOf(CommandBase::class.java).forEach { it.newInstance() }
 }

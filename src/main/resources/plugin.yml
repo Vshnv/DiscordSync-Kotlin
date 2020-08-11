@@ -1,0 +1,11 @@
+name: DiscordSync
+version: 1.0
+main: com.github.vshnv.discordsync.DSync
+api-version: 1.13
+prefix: DSync
+authors: [Vshnv]
+description: Synchronizes chat between minecraft server and multiple discord servers
+website: vshnv.github.io
+commands:
+  dsync:
+  dcast:

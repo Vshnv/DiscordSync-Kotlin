@@ -6,7 +6,9 @@ import org.bukkit.plugin.java.JavaPlugin
 class DSync: JavaPlugin() {
     internal lateinit var bot: Bot
         private set
+    
     override fun onEnable() {
+        saveDefaultConfig()
         registerAllCommands()
         bot = Bot(loadToken(this))
         loadFormats(this)

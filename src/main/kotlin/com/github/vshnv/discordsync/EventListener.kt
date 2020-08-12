@@ -10,11 +10,18 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 import java.util.stream.Collectors
 
 
 class EventListener: Listener {
+
+
+    /**
+     * Forwards minecraft chat messages to dsicord server
+     */
     @EventHandler(ignoreCancelled = true) fun onMessage(event: AsyncPlayerChatEvent) {
         if (event.recipients.size <= 1 && Bukkit.getOnlinePlayers().size > 1) return
         val p: Player = event.getPlayer()
@@ -29,11 +36,16 @@ class EventListener: Listener {
         if (!channel.isDefaultchannel) return
         DiscordMessenger.sendMessage(
             DiscordMessage(
-                event.player.name,
-                event.message
+                name = event.player.name,
+                msg = event.message,
+                avatar = findPlayerSkinAvatar(name = event.player.name)
             )
         )
     }
+
+    /**
+     * Forwards Achievement alerts to discord receivers
+     */
     @EventHandler(ignoreCancelled = true) fun onAchieve(event: PlayerAdvancementDoneEvent) {
 
         if (
@@ -78,7 +90,7 @@ class EventListener: Listener {
 
         DiscordMessenger.sendMessage(
             DiscordMessage(
-                "Achievement",
+                "» Achievement Gain!",
                 format(
                     Format.ACHIEVEMENT,
                     "player" to event.player.name,
@@ -86,16 +98,54 @@ class EventListener: Listener {
             )
         )
     }
+
+    /**
+     * Forwards player death alerts to discord receivers
+     */
     @EventHandler(ignoreCancelled = true) fun onDeath(event: PlayerDeathEvent) {
         if(event.entity.hasPermission("discordsync.silent"))return;
         if(event.entity.hasMetadata("NPC"))return;
         DiscordMessenger.sendMessage(
             DiscordMessage(
-                "Death",
+                "» Death",
                 format(Format.DEATH, "Player" to event.entity.name)
             )
         )
     }
 
+    /**
+     * Forwards Player join alerts to discord receivers
+     */
+    @EventHandler(ignoreCancelled = true) fun onJoin(event: PlayerJoinEvent) {
+        if(event.player.hasPermission("discordsync.silent"))return;
+        DiscordMessenger.sendMessage(
+            DiscordMessage(
+                "» Player Join",
+                format(Format.DEATH, "Player" to event.player.name),
+                findPlayerSkinAvatar(event.player.name)
+            )
+        )
+    }
+
+    /**
+     * Forwards Player quit alerts to discord receivers
+     */
+    @EventHandler(ignoreCancelled = true) fun onJoin(event: PlayerQuitEvent) {
+        if(event.player.hasPermission("discordsync.silent"))return;
+        DiscordMessenger.sendMessage(
+            DiscordMessage(
+                "» Player Leave",
+                format(Format.DEATH, "Player" to event.player.name),
+                findPlayerSkinAvatar(event.player.name)
+            )
+        )
+    }
+
+
+    /**
+     * Returns avatar URL for player
+     * @param name Minecraft name of player
+     */
+    private fun findPlayerSkinAvatar(name: String) = "https://mc-heads.net/avatar/$name/100"
 
 }

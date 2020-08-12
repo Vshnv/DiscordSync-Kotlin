@@ -12,6 +12,7 @@ class DSync: JavaPlugin() {
         registerAllCommands()
         bot = Bot(loadToken(this))
         loadFormats(this)
+        reloadReceiversFromConfig(this)
         this.server.pluginManager.registerEvents(EventListener(), this)
     }
 

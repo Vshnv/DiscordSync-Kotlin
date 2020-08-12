@@ -25,7 +25,7 @@ class ReloadCommand: CommandBase("dsync", "discordsync.reload") {
 
 class DCastCommand: CommandBase("dcast", "discordsync.dcast") {
     override fun execute(sender: CommandSender, args: Array<out String>): Boolean {
-        DiscordMessenger.sendMessage(DiscordMessage("Broadcast", args.joinToString { " " }))
+        DiscordMessenger.sendMessage(DiscordMessage("Broadcast", args.joinToString ( " " )))
         MCMessenger.sendMessage(MCMessage("Broadcast",args.joinToString { " " }, Format.D_CAST))
         sender.sendMessage("Cast successful!")
         return true

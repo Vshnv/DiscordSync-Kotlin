@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.requests.GatewayIntent
 import org.bukkit.Bukkit
+import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 
 
@@ -49,10 +50,11 @@ internal class Bot(token: String) {
                 }
 
                 MCMessenger.sendMessage(MCMessage(event.author.name, event.message.contentStripped, Format.CHAT))
-                DiscordMessenger.sendMessage(DiscordMessage(event.author.name, event.message.contentStripped, event.author.avatarUrl?: event.author.defaultAvatarUrl, event.channel.idLong))
+                DiscordMessenger.sendMessage(DiscordMessage(event.author.name, event.message.contentStripped, event.author.avatarUrl?: event.author.defaultAvatarUrl,null, event.channel.idLong))
             }
         })
         jda.awaitReady()
+
     }
 
     /**

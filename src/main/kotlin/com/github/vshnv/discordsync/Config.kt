@@ -66,8 +66,10 @@ fun format(format: Format, vararg args: Pair<String, String>): String {
 
 
 enum class Format(val path: String){
-    D_CAST("formats.minecraft.dcast"),
     ACHIEVEMENT("formats.discord.achievement"),
     DEATH("formats.discord.death"),
+    JOIN("formats.discord.join"),
+    QUIT("formats.discord.quit"),
+    D_CAST("formats.minecraft.dcast"),
     CHAT("formats.minecraft.chat")
 }

@@ -1,9 +1,12 @@
 package com.github.vshnv.discordsync
 
+import club.minnced.discord.webhook.send.WebhookEmbed
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder
 import com.github.vshnv.discordsync.messaging.DiscordMessage
 import com.github.vshnv.discordsync.messaging.DiscordMessenger
 import mineverse.Aust1n46.chat.api.MineverseChatAPI
 import org.bukkit.Bukkit
+import org.bukkit.Statistic
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,12 +18,12 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 import java.util.stream.Collectors
 
-
+private const val DSYNC_AVATAR = "https://i.ibb.co/0q4zqgn/Discord-Sync.png"
 class EventListener: Listener {
 
 
     /**
-     * Forwards minecraft chat messages to dsicord server
+     * Forwards minecraft chat messages to discord server
      */
     @EventHandler(ignoreCancelled = true) fun onMessage(event: AsyncPlayerChatEvent) {
         if (event.recipients.size <= 1 && Bukkit.getOnlinePlayers().size > 1) return
@@ -91,10 +94,16 @@ class EventListener: Listener {
         DiscordMessenger.sendMessage(
             DiscordMessage(
                 "» Achievement Gain!",
-                format(
-                    Format.ACHIEVEMENT,
-                    "player" to event.player.name,
-                    "achievement" to advancementName)
+                "",
+                DSYNC_AVATAR,
+                WebhookEmbedBuilder()
+                    .setColor(65280)
+                    .setDescription(
+                        format(
+                        Format.ACHIEVEMENT,
+                        "player" to event.player.name,
+                        "achievement" to advancementName))
+                    .build()
             )
         )
     }
@@ -108,7 +117,12 @@ class EventListener: Listener {
         DiscordMessenger.sendMessage(
             DiscordMessage(
                 "» Death",
-                format(Format.DEATH, "Player" to event.entity.name)
+                "",
+                DSYNC_AVATAR,
+                WebhookEmbedBuilder()
+                    .setColor(16711680)
+                    .setDescription(format(Format.DEATH, "Player" to event.entity.name))
+                    .build()
             )
         )
     }
@@ -117,12 +131,28 @@ class EventListener: Listener {
      * Forwards Player join alerts to discord receivers
      */
     @EventHandler(ignoreCancelled = true) fun onJoin(event: PlayerJoinEvent) {
-        if(event.player.hasPermission("discordsync.silent"))return;
+        if(event.player.hasPermission("discordsync.silent"))return
+        val kills = event.player.getStatistic(Statistic.PLAYER_KILLS)
+        val deaths = event.player.getStatistic(Statistic.DEATHS)
+        val kd = if (deaths < 1) "N/A" else (kills.toFloat() / deaths.toFloat()).toString()
         DiscordMessenger.sendMessage(
             DiscordMessage(
                 "» Player Join",
-                format(Format.DEATH, "Player" to event.player.name),
-                findPlayerSkinAvatar(event.player.name)
+                "",
+                DSYNC_AVATAR,
+                WebhookEmbedBuilder()
+                    .setColor(255)
+                    .setTitle(
+                        WebhookEmbed.EmbedTitle(
+                            format(Format.JOIN, "Player" to event.player.name),null
+                        )
+                    )
+                    .addField(WebhookEmbed.EmbedField(true, "Play Time", ((event.player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 72000F).toString())))
+                    .addField(WebhookEmbed.EmbedField(true, "Kills", ((event.player.getStatistic(Statistic.PLAYER_KILLS)).toString())))
+                    .addField(WebhookEmbed.EmbedField(true, "Deaths", ((event.player.getStatistic(Statistic.DEATHS)).toString())))
+                    .addField(WebhookEmbed.EmbedField(true, "K/D ratio", (kd)))
+                    .addField(WebhookEmbed.EmbedField(true, "Mobs killed", ((event.player.getStatistic(Statistic.MOB_KILLS)).toString())))
+                    .build()
             )
         )
     }
@@ -130,13 +160,17 @@ class EventListener: Listener {
     /**
      * Forwards Player quit alerts to discord receivers
      */
-    @EventHandler(ignoreCancelled = true) fun onJoin(event: PlayerQuitEvent) {
+    @EventHandler(ignoreCancelled = true) fun onQuit(event: PlayerQuitEvent) {
         if(event.player.hasPermission("discordsync.silent"))return;
         DiscordMessenger.sendMessage(
             DiscordMessage(
                 "» Player Leave",
-                format(Format.DEATH, "Player" to event.player.name),
-                findPlayerSkinAvatar(event.player.name)
+                "",
+                DSYNC_AVATAR,
+                WebhookEmbedBuilder()
+                    .setColor(255)
+                    .setDescription(format(Format.QUIT, "Player" to event.player.name))
+                    .build()
             )
         )
     }
